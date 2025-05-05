@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - GUTSCO</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>GUTSCO</h1>
+    </header>
+    <main class="auth-main">
+      <div class="auth-container">
+        <div class="auth-box">
+          <h2>Login</h2>
+          <form id="login-form">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input
+                autocomplete="off"
+                type="text"
+                id="username"
+                name="username"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                autocomplete="off"
+                type="password"
+                id="password"
+                name="password"
+                required
+              />
+            </div>
+            <button type="submit">Login</button>
+          </form>
+          <p class="auth-switch">
+            Don't have an account? <button id="show-signup">Sign Up</button>
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal">
+      <div class="modal-content">
+        <h2>Create Account</h2>
+        <form id="signup-form">
+          <div class="form-group">
+            <label for="signup-username">Username</label>
+            <input
+              autocomplete="off"
+              type="text"
+              id="signup-username"
+              name="username"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="signup-email">Email</label>
+            <input
+              autocomplete="off"
+              type="email"
+              id="signup-email"
+              name="email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <input
+              autocomplete="off"
+              type="password"
+              id="signup-password"
+              name="password"
+              required
+            />
+            <small class="help-text"
+              >Password must be at least 8 characters long</small
+            >
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <input
+              autocomplete="off"
+              type="password"
+              id="confirm-password"
+              name="confirmPassword"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="role">Role</label>
+            <select id="role" name="role" required>
+              <option value="operator">Operator</option>
+              <option value="passenger">Passenger</option>
+            </select>
+          </div>
+          <div class="form-group rfid-group" style="display: none">
+            <label for="rfid">RFID Number</label>
+            <input autocomplete="off" type="text" id="rfid" name="rfid" />
+            <small class="help-text">Required for passenger accounts</small>
+          </div>
+          <button type="submit">Sign Up</button>
+          <button type="button" class="close-modal">Cancel</button>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="assets/js/config.js"></script>
+    <script type="module" src="assets/js/auth.js"></script>
+  </body>
+</html>
