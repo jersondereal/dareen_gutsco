@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'https://dareen-gutsco.infy.uk/api';
 
 // Function to register a new passenger
 async function registerPassenger(passengerData) {
