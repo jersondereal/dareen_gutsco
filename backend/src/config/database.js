@@ -9,6 +9,9 @@ const db = mysql.createConnection({
     port: process.env.DB_PORT || 3306,
     ssl: {
         rejectUnauthorized: false
+    },
+    authPlugins: {
+        mysql_native_password: () => () => Buffer.from([0])
     }
 });
 
