@@ -6,41 +6,53 @@ const jwt = require('jsonwebtoken');
 exports.login = async (req, res) => {
     const { username, password } = req.body;
 
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Username and password are required' });
+    }
+
     const query = 'SELECT * FROM Users WHERE Username = ?';
     db.query(query, [username], async (err, results) => {
-
         if (err) {
-            console.error('Login error:', err);
-            return res.status(500).json({ message: 'Internal server error' });
+            console.error('Login database error:', err);
+            return res.status(500).json({ 
+                message: 'Internal server error',
+                error: err.message 
+            });
         }
 
         if (results.length === 0) {
-            console.log("no results")
+            console.log("No user found with username:", username);
             return res.status(401).json({ message: 'Invalid username or password' });
         }
 
         const user = results[0];
-        const validPassword = await bcrypt.compare(password, user.Password);
+        try {
+            const validPassword = await bcrypt.compare(password, user.Password);
+            
+            if (!validPassword) {
+                console.log("Invalid password for user:", username);
+                return res.status(401).json({ message: 'Invalid username or password' });
+            }
 
-        console.log(password, user.Password)
-        
-        if (!validPassword) {
-            console.log("invalid password")
-            return res.status(401).json({ message: 'Invalid username or password' });
+            const token = jwt.sign(
+                { userId: user.UserID, role: user.Role },
+                process.env.JWT_SECRET || 'your-secret-key',
+                { expiresIn: '24h' }
+            );
+
+            res.json({
+                token,
+                role: user.Role,
+                userId: user.UserID,
+                rfid: user.RFID
+            });
+        } catch (error) {
+            console.error('Password comparison error:', error);
+            return res.status(500).json({ 
+                message: 'Internal server error',
+                error: error.message 
+            });
         }
-
-        const token = jwt.sign(
-            { userId: user.UserID, role: user.Role },
-            process.env.JWT_SECRET,
-            { expiresIn: '24h' }
-        );
-
-        res.json({
-            token,
-            role: user.Role,
-            userId: user.UserID,
-            rfid: user.RFID
-        });
     });
 };
 

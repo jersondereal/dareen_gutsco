@@ -11,10 +11,27 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
     if (err) {
-        console.error('Database connection failed:', err.stack);
+        console.error('Database connection failed. Error details:', {
+            code: err.code,
+            errno: err.errno,
+            sqlState: err.sqlState,
+            sqlMessage: err.sqlMessage,
+            message: err.message
+        });
         return;
     }
-    console.log('Connected to database.');
+    console.log('Connected to database successfully.');
+});
+
+// Handle connection errors
+db.on('error', (err) => {
+    console.error('Database error:', err);
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+        console.log('Database connection was closed. Reconnecting...');
+        db.connect();
+    } else {
+        throw err;
+    }
 });
 
 module.exports = db;
