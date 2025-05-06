@@ -7,6 +7,9 @@ const db = mysql.createConnection({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     port: process.env.DB_PORT || 3306,
+    ssl: {
+        rejectUnauthorized: true
+    }
 });
 
 db.connect((err) => {
@@ -16,7 +19,8 @@ db.connect((err) => {
             errno: err.errno,
             sqlState: err.sqlState,
             sqlMessage: err.sqlMessage,
-            message: err.message
+            message: err.message,
+            stack: err.stack
         });
         return;
     }
@@ -29,6 +33,10 @@ db.on('error', (err) => {
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
         console.log('Database connection was closed. Reconnecting...');
         db.connect();
+    } else if (err.code === 'ECONNREFUSED') {
+        console.error('Connection refused. Please check if the database server is running and accessible.');
+    } else if (err.code === 'ETIMEDOUT') {
+        console.error('Connection timed out. Please check your network connection and firewall settings.');
     } else {
         throw err;
     }
