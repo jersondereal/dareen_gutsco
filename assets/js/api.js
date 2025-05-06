@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://dareen-gutsco.infy.uk/api';
+const API_BASE_URL = 'https://dareen-gutsco.onrender.com/api';
 
 // Function to register a new passenger
 async function registerPassenger(passengerData) {
