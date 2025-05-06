@@ -10,10 +10,18 @@ exports.login = async (req, res) => {
         return res.status(400).json({ message: 'Username and password are required' });
     }
 
+    console.log('Attempting login for username:', username);
+
     const query = 'SELECT * FROM Users WHERE Username = ?';
     db.query(query, [username], async (err, results) => {
         if (err) {
-            console.error('Login database error:', err);
+            console.error('Login database error:', {
+                error: err,
+                code: err.code,
+                errno: err.errno,
+                sqlState: err.sqlState,
+                sqlMessage: err.sqlMessage
+            });
             return res.status(500).json({ 
                 message: 'Internal server error',
                 error: err.message 
