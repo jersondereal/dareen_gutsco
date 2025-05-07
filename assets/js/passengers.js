@@ -169,7 +169,7 @@ function fetchPassengers() {
                     <td>${passenger.FirstName || '-'}</td>
                     <td>${passenger.LastName || '-'}</td>
                     <td>${passenger.PhoneNumber || '-'}</td>
-                    <td class="balance">₱${(passenger.CurrentBalance || 0).toFixed(2)}</td>
+                    <td class="balance">₱${(parseFloat(passenger.CurrentBalance) || 0).toFixed(2)}</td>
                     ${!isPassenger ? `
                     <td>
                         <button onclick="editPassenger('${passenger.RFID}', '${passenger.FirstName}', '${passenger.LastName}', '${passenger.PhoneNumber}')">Edit</button>
