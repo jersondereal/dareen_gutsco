@@ -196,10 +196,10 @@ function fetchTransactions() {
                 row.innerHTML = `
                     <td>${transaction.RFID || '-'}</td>
                     <td>${transaction.TransactionType || '-'}</td>
-                    <td>₱${(transaction.Amount || 0).toFixed(2)}</td>
+                    <td>₱${(parseFloat(transaction.Amount) || 0).toFixed(2)}</td>
                     <td>${transaction.Destination || '-'}</td>
-                    <td>${transaction.Fare ? `₱${transaction.Fare.toFixed(2)}` : '-'}</td>
-                    <td class="balance">₱${(transaction.RemainingBalance || 0).toFixed(2)}</td>
+                    <td>${transaction.Fare ? `₱${parseFloat(transaction.Fare).toFixed(2)}` : '-'}</td>
+                    <td class="balance">₱${(parseFloat(transaction.RemainingBalance) || 0).toFixed(2)}</td>
                     <td>${new Date(transaction.Timestamp).toLocaleString()}</td>
                     ${!isPassenger && isAdmin ? `
                         <td>
