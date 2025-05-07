@@ -1,19 +1,19 @@
 const db = require('../config/database');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 // Login user
 exports.login = async (req, res) => {
     const { username, password } = req.body;
 
+    console.log('Login attempt:', { username });
+
     if (!username || !password) {
+        console.log('Missing credentials:', { username: !!username, password: !!password });
         return res.status(400).json({ message: 'Username and password are required' });
     }
 
-    console.log('Attempting login for username:', username);
-
-    const query = 'SELECT * FROM Users WHERE Username = ?';
-    db.query(query, [username], async (err, results) => {
+    const query = 'SELECT * FROM Users WHERE Username = ? AND Password = ?';
+    db.query(query, [username, password], (err, results) => {
         if (err) {
             console.error('Login database error:', {
                 error: err,
@@ -28,39 +28,29 @@ exports.login = async (req, res) => {
             });
         }
 
+        console.log('Database results:', { 
+            userFound: results.length > 0,
+            username: username
+        });
+
         if (results.length === 0) {
             console.log("No user found with username:", username);
             return res.status(401).json({ message: 'Invalid username or password' });
         }
 
         const user = results[0];
-        try {
-            const validPassword = await bcrypt.compare(password, user.Password);
-            
-            if (!validPassword) {
-                console.log("Invalid password for user:", username);
-                return res.status(401).json({ message: 'Invalid username or password' });
-            }
+        const token = jwt.sign(
+            { userId: user.UserID, role: user.Role },
+            process.env.JWT_SECRET || 'your-secret-key',
+            { expiresIn: '24h' }
+        );
 
-            const token = jwt.sign(
-                { userId: user.UserID, role: user.Role },
-                process.env.JWT_SECRET || 'your-secret-key',
-                { expiresIn: '24h' }
-            );
-
-            res.json({
-                token,
-                role: user.Role,
-                userId: user.UserID,
-                rfid: user.RFID
-            });
-        } catch (error) {
-            console.error('Password comparison error:', error);
-            return res.status(500).json({ 
-                message: 'Internal server error',
-                error: error.message 
-            });
-        }
+        res.json({
+            token,
+            role: user.Role,
+            userId: user.UserID,
+            rfid: user.RFID
+        });
     });
 };
 
@@ -103,30 +93,24 @@ exports.signup = async (req, res) => {
                         return res.status(409).json({ message: 'RFID already registered' });
                     }
 
-                    await createUser();
+                    createUser();
                 });
             } else {
-                await createUser();
+                createUser();
             }
         });
     });
 
-    async function createUser() {
-        try {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const query = 'INSERT INTO Users (Username, Email, Password, Role, RFID) VALUES (?, ?, ?, ?, ?)';
+    function createUser() {
+        const query = 'INSERT INTO Users (Username, Email, Password, Role, RFID) VALUES (?, ?, ?, ?, ?)';
+        
+        db.query(query, [username, email, password, role, rfid || null], (err, result) => {
+            if (err) {
+                console.error('Error creating user:', err);
+                return res.status(500).json({ message: 'Failed to create user' });
+            }
             
-            db.query(query, [username, email, hashedPassword, role, rfid || null], (err, result) => {
-                if (err) {
-                    console.error('Error creating user:', err);
-                    return res.status(500).json({ message: 'Failed to create user' });
-                }
-                
-                res.status(201).json({ message: 'User created successfully' });
-            });
-        } catch (err) {
-            console.error('Error hashing password:', err);
-            res.status(500).json({ message: 'Internal server error' });
-        }
+            res.status(201).json({ message: 'User created successfully' });
+        });
     }
 }; 
