@@ -1,26 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const studentController = require('../controllers/studentController');
+const accountController = require('../controllers/accountController');
 
-// Get all students
-router.get('/', studentController.getAllStudents);
+// Get all passengers
+router.get('/', accountController.getPassengers);
 
-// Get student by RFID
-router.get('/rfid/:rfidTag', studentController.findByRFID);
+// Register new passenger
+router.post('/', accountController.registerPassenger);
 
-// Get student by ID
-router.get('/:id', studentController.getStudentById);
+// Update passenger
+router.put('/:rfid', accountController.updatePassenger);
 
-// Get student records
-router.get('/:id/records', studentController.getStudentRecords);
-
-// Create new student
-router.post('/', studentController.createStudent);
-
-// Update student
-router.put('/:id', studentController.updateStudent);
-
-// Delete student
-router.delete('/:id', studentController.deleteStudent);
+// Delete passenger
+router.delete('/:rfid', accountController.deletePassenger);
 
 module.exports = router; 

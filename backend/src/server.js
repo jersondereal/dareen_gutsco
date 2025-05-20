@@ -16,7 +16,7 @@ const recordRoutes = require('./routes/recordRoutes');
 
 // Middleware
 app.use(cors({
-    origin: ['https://dareen-gutsco.onrender.com', 'http://localhost:3000'],
+    origin: ['*'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));

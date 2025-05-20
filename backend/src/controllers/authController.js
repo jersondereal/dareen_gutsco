@@ -39,18 +39,18 @@ exports.login = async (req, res) => {
         }
 
         const user = results[0];
-        const token = jwt.sign(
-            { userId: user.UserID, role: user.Role },
-            process.env.JWT_SECRET || 'your-secret-key',
-            { expiresIn: '24h' }
-        );
+            const token = jwt.sign(
+                { userId: user.UserID, role: user.Role },
+                process.env.JWT_SECRET || 'your-secret-key',
+                { expiresIn: '24h' }
+            );
 
-        res.json({
-            token,
-            role: user.Role,
-            userId: user.UserID,
-            rfid: user.RFID
-        });
+            res.json({
+                token,
+                role: user.Role,
+                userId: user.UserID,
+                rfid: user.RFID
+            });
     });
 };
 
@@ -102,15 +102,15 @@ exports.signup = async (req, res) => {
     });
 
     function createUser() {
-        const query = 'INSERT INTO Users (Username, Email, Password, Role, RFID) VALUES (?, ?, ?, ?, ?)';
-        
-        db.query(query, [username, email, password, role, rfid || null], (err, result) => {
-            if (err) {
-                console.error('Error creating user:', err);
-                return res.status(500).json({ message: 'Failed to create user' });
-            }
+            const query = 'INSERT INTO Users (Username, Email, Password, Role, RFID) VALUES (?, ?, ?, ?, ?)';
             
-            res.status(201).json({ message: 'User created successfully' });
-        });
+        db.query(query, [username, email, password, role, rfid || null], (err, result) => {
+                if (err) {
+                    console.error('Error creating user:', err);
+                    return res.status(500).json({ message: 'Failed to create user' });
+                }
+                
+                res.status(201).json({ message: 'User created successfully' });
+            });
     }
 }; 
