@@ -14,12 +14,10 @@ const db = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const recordRoutes = require('./routes/recordRoutes');
 
+// Simple CORS configuration
+app.use(cors());
+
 // Middleware
-app.use(cors({
-    origin: ['*'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
-}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../../')));
 
